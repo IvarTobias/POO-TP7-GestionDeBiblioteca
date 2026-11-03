@@ -1,4 +1,3 @@
-
 /**
  * Representa a un socio estudiante de la biblioteca.
  * Hereda de la clase Socio.
