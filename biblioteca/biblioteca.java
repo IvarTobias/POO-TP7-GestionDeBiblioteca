@@ -96,3 +96,102 @@ public ArrayList<Prestamo> prestamosVencidos() {
 
     return vencidos;
 }
+
+
+
+
+
+
+/**
+     * Lista de todos los Socios de la Biblioteca.
+     *
+     * @return devuelve un String de socios según formato1.
+     */
+    public String listaDeSocios(){
+        String listaAux = "Lista de Socios: \n";
+        int cant = 1;
+        
+        for(Socio socio: this.getSocios().values()){
+            listaAux += ( cant + ") D.N.I: " + socio.dniSocio() + " || " + socio.nombre() + "(" + socio.soyDeLaClase() + ")" + 
+                            " || Libros Prestados: " +  socio.cantLibrosPrestados()) + "\n";
+                            
+            cant += 1;
+                
+        }
+        return listaAux;
+    }
+
+    
+    /**
+     * Busca un Socio de la Biblioteca.
+     * 
+     * @param p_dni el dni del socio que se busca.
+     * 
+     * @return devuelve el Socio que tiene el dni pasado como parámetro, o null si no lo encuentra.
+     */
+    public Socio buscarSocio(int p_dni) {
+        if(this.getSocios().containsKey(p_dni)) {
+            return this.getSocios().get(p_dni);
+        }
+        return null;
+    }
+    
+    /**
+     * Lista de todos los Titulos de la Biblioteca.
+     * 
+     * @return devuelve un String con la lista de los títulos con los que cuenta la Biblioteca.
+     */
+    public String listaDeTitulos(){
+        String titulos = "";
+        
+        for(Libro libro: this.getLibros()) {
+            if(!titulos.contains(libro.titulo())) {
+                titulos += libro.titulo() + "\n";
+            }
+            
+        }
+        
+        return titulos;
+    }
+    
+    /**
+     * Lista de todos los Libros de la Biblioteca.
+     * 
+     * @return  devuelve un String de libros según formato2.
+     */
+    public String listaDeLibros() {
+        String listaLibros = "Lista de Libros: \n";
+        int cant = 1;
+        
+        for(Libro libro: this.getLibros()) {
+            listaLibros += cant + ") Titulo:" + libro.titulo() + " || Prestado:" + ((libro.prestado()) ? "Si": "No") + "\n";
+            cant += 1;
+        }
+        
+        return listaLibros;
+    }
+    
+    /**
+     * Lista de todos los Docentes de la Biblioteca.
+     * 
+     * @return  devuelve un String de docentes según formato3.
+     */
+    public String listaDeDocentesResponsables() {
+        String listaDocentes = "Lista de Docentes Responsables: \n";
+        
+        for(Socio socio: this.getSocios().values()) {
+            if (socio instanceof Docente) {
+                Docente docente = (Docente) socio; 
+                
+                if(docente.esResponsable()) {
+                    listaDocentes += "* D.N.I: " + socio.dniSocio() + " || " + socio.nombre() + "(" + docente.soyDeLaClase() + ")" + 
+                                " || Libros Prestados: " +  socio.cantLibrosPrestados() + "\n";
+                }
+                
+            }
+        }
+        
+        return listaDocentes;
+    }
+
+
