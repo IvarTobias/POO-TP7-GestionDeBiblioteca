@@ -98,9 +98,35 @@ public ArrayList<Prestamo> prestamosVencidos() {
 }
 
 
+public ArrayList<Docente> docentesResponsables() {
+    ArrayList<Docente> docentes = new ArrayList<Docente>();
 
+    for (Socio socio : this.getSocios().values()) {
+        if (socio instanceof Docente) {
+            Docente docente = (Docente) socio;
 
+            if (docente.esResponsable()) {
+                docentes.add(docente);
+            }
+        }
+    }
 
+    return docentes;
+}
+
+public String quienTieneElLibro(Libro p_libro) {
+    for (Socio socio : this.getSocios().values()) {
+        for (Prestamo prestamo : socio.getPrestamos()) {
+            if (prestamo.getLibro().getTitulo().equalsIgnoreCase(p_libro.getTitulo())
+                && prestamo.getFechaDevolucion() == null) {
+
+                return socio.getNombre();
+            }
+        }
+    }
+
+    return "Ningún socio tiene este libro prestado.";
+}
 
 /**
      * Lista de todos los Socios de la Biblioteca.
