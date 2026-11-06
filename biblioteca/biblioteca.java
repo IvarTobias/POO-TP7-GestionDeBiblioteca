@@ -65,8 +65,7 @@ public class Biblioteca {
      */
     public void agregarSocio(Socio p_socio) {
         if (p_socio == null) return;
-        // CAMBIO: en vez de containsValue (O(n) y depende de equals),
-        // usamos la clave DNI para evitar duplicados de forma determinística.
+        
         if (this.getSocios().containsKey(p_socio.getDniSocio())) {
             System.out.println("El socio ya se encuentra registrado.");
         } else {
@@ -82,7 +81,7 @@ public class Biblioteca {
      */
     public void quitarSocio(Socio p_socio) {
         if (p_socio == null) return;
-        // CAMBIO: eliminamos por clave DNI directamente.
+        
         if (this.getSocios().remove(p_socio.getDniSocio()) != null) {
             System.out.println("Se dio de baja al socio: " + p_socio.getNombre());
         } else {
