@@ -1,10 +1,36 @@
-public Biblioteca(String p_nombre, HashMap<Integer, Socio> p_socios, ArrayList<Libro> p_libros) {
+import java.util.*;
+
+public class Biblioteca {
+    // ================= Atributos
+    private String nombre;
+    private HashMap<Integer, Socio> socios; // socios por DNI
+    private ArrayList<Libro> libros;
+
+    /**
+     * Constructor que instancia los atributos del objeto de la clase Biblioteca
+     *
+     * @param p_nombre es el nombre de la biblioteca
+     */
+    public Biblioteca(String p_nombre) {
+        this.setNombre(p_nombre);
+        this.setSocios(new HashMap<>());
+        this.setLibros(new ArrayList<>());
+    }
+
+    /**
+     * Constructor que instancia los atributos del objeto de la clase Biblioteca
+     *
+     * @param p_nombre nombre
+     * @param p_socios mapa de socios (dni->socio)
+     * @param p_libros lista de libros
+     */
+    public Biblioteca(String p_nombre, HashMap<Integer, Socio> p_socios, ArrayList<Libro> p_libros) {
         this.setNombre(p_nombre);
         this.setSocios(p_socios);
         this.setLibros(p_libros);
     }
 
-    // ================= Setters (privados como en tu guía)
+    // ================= Setters
     private void setNombre(String p_nombre) {
         this.nombre = p_nombre;
     }
@@ -64,71 +90,69 @@ public Biblioteca(String p_nombre, HashMap<Integer, Socio> p_socios, ArrayList<L
         }
     }
 
+    public int cantidadDeSociosPorTipo(String p_objeto) {
+        int contador = 0;
 
-public int cantidadDeSociosPorTipo(String p_objeto) {
-    int contador = 0;
-
-    for (Socio s : socios) {
-        if (s.getTipo().equalsIgnoreCase(p_objeto)) {
-            contador++;
+        for (Socio s : socios) {
+            if (s.getTipo().equalsIgnoreCase(p_objeto)) {
+                contador++;
+            }
         }
+
+        return contador;
     }
 
-    return contador;
-}
+    public ArrayList<Prestamo> prestamosVencidos() {
+        ArrayList<Prestamo> vencidos = new ArrayList<Prestamo>();
 
-public ArrayList<Prestamo> prestamosVencidos() {
-    ArrayList<Prestamo> vencidos = new ArrayList<Prestamo>();
+        Calendar hoy = Calendar.getInstance();
 
-    Calendar hoy = Calendar.getInstance();
+        for (Prestamo p : prestamos) {
 
-    for (Prestamo p : prestamos) {
+            Calendar fechaVencimiento = (Calendar) p.getFechaRetiro().clone();
+            fechaVencimiento.add(Calendar.DAY_OF_MONTH, 15);
 
-        Calendar fechaVencimiento = (Calendar) p.getFechaRetiro().clone();
-        fechaVencimiento.add(Calendar.DAY_OF_MONTH, 15);
-
-        if (hoy.after(fechaVencimiento) &&
+            if (hoy.after(fechaVencimiento) &&
             !p.isDevuelto()) {
 
-            vencidos.add(p);
-        }
-    }
-
-    return vencidos;
-}
-
-
-public ArrayList<Docente> docentesResponsables() {
-    ArrayList<Docente> docentes = new ArrayList<Docente>();
-
-    for (Socio socio : this.getSocios().values()) {
-        if (socio instanceof Docente) {
-            Docente docente = (Docente) socio;
-
-            if (docente.esResponsable()) {
-                docentes.add(docente);
+                vencidos.add(p);
             }
         }
+
+        return vencidos;
     }
 
-    return docentes;
-}
+    public ArrayList<Docente> docentesResponsables() {
+        ArrayList<Docente> docentes = new ArrayList<Docente>();
 
-public String quienTieneElLibro(Libro p_libro) {
-    for (Socio socio : this.getSocios().values()) {
-        for (Prestamo prestamo : socio.getPrestamos()) {
-            if (prestamo.getLibro().getTitulo().equalsIgnoreCase(p_libro.getTitulo())
+        for (Socio socio : this.getSocios().values()) {
+            if (socio instanceof Docente) {
+                Docente docente = (Docente) socio;
+
+                if (docente.esResponsable()) {
+                    docentes.add(docente);
+                }
+            }
+        }
+
+        return docentes;
+    }
+
+    public String quienTieneElLibro(Libro p_libro) {
+        for (Socio socio : this.getSocios().values()) {
+            for (Prestamo prestamo : socio.getPrestamos()) {
+                if (prestamo.getLibro().getTitulo().equalsIgnoreCase(p_libro.getTitulo())
                 && prestamo.getFechaDevolucion() == null) {
 
-                return socio.getNombre();
+                    return socio.getNombre();
+                }
             }
         }
+
+        return "Ningún socio tiene este libro prestado.";
     }
 
-    return "Ningún socio tiene este libro prestado.";
-}
-
-/**
+    /**
      * Lista de todos los Socios de la Biblioteca.
      *
      * @return devuelve un String de socios según formato1.
@@ -136,18 +160,17 @@ public String quienTieneElLibro(Libro p_libro) {
     public String listaDeSocios(){
         String listaAux = "Lista de Socios: \n";
         int cant = 1;
-        
+
         for(Socio socio: this.getSocios().values()){
             listaAux += ( cant + ") D.N.I: " + socio.dniSocio() + " || " + socio.nombre() + "(" + socio.soyDeLaClase() + ")" + 
-                            " || Libros Prestados: " +  socio.cantLibrosPrestados()) + "\n";
-                            
+                " || Libros Prestados: " +  socio.cantLibrosPrestados()) + "\n";
+
             cant += 1;
-                
+
         }
         return listaAux;
     }
 
-    
     /**
      * Busca un Socio de la Biblioteca.
      * 
@@ -161,7 +184,7 @@ public String quienTieneElLibro(Libro p_libro) {
         }
         return null;
     }
-    
+
     /**
      * Lista de todos los Titulos de la Biblioteca.
      * 
@@ -169,17 +192,17 @@ public String quienTieneElLibro(Libro p_libro) {
      */
     public String listaDeTitulos(){
         String titulos = "";
-        
+
         for(Libro libro: this.getLibros()) {
             if(!titulos.contains(libro.titulo())) {
                 titulos += libro.titulo() + "\n";
             }
-            
+
         }
-        
+
         return titulos;
     }
-    
+
     /**
      * Lista de todos los Libros de la Biblioteca.
      * 
@@ -188,15 +211,15 @@ public String quienTieneElLibro(Libro p_libro) {
     public String listaDeLibros() {
         String listaLibros = "Lista de Libros: \n";
         int cant = 1;
-        
+
         for(Libro libro: this.getLibros()) {
             listaLibros += cant + ") Titulo:" + libro.titulo() + " || Prestado:" + ((libro.prestado()) ? "Si": "No") + "\n";
             cant += 1;
         }
-        
+
         return listaLibros;
     }
-    
+
     /**
      * Lista de todos los Docentes de la Biblioteca.
      * 
@@ -204,20 +227,20 @@ public String quienTieneElLibro(Libro p_libro) {
      */
     public String listaDeDocentesResponsables() {
         String listaDocentes = "Lista de Docentes Responsables: \n";
-        
+
         for(Socio socio: this.getSocios().values()) {
             if (socio instanceof Docente) {
                 Docente docente = (Docente) socio; 
-                
+
                 if(docente.esResponsable()) {
                     listaDocentes += "* D.N.I: " + socio.dniSocio() + " || " + socio.nombre() + "(" + docente.soyDeLaClase() + ")" + 
-                                " || Libros Prestados: " +  socio.cantLibrosPrestados() + "\n";
+                    " || Libros Prestados: " +  socio.cantLibrosPrestados() + "\n";
                 }
-                
+
             }
         }
-        
+
         return listaDocentes;
     }
 
-
+}
