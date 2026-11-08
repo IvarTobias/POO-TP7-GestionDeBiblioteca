@@ -101,28 +101,22 @@ public class Biblioteca {
         return contador;
     }
 
-    public ArrayList<Prestamo> prestamosVencidos() {
-        ArrayList<Prestamo> vencidos = new ArrayList<Prestamo>();
+  public ArrayList<Prestamo> prestamosVencidos() {
+       ArrayList<Prestamo> vencidos = new ArrayList<Prestamo>();
 
-        Calendar hoy = Calendar.getInstance();
+       Calendar hoy = Calendar.getInstance();
 
-        for (Socio s : this.getSocios().values()) {
-            for (Prestamo p: s.getPrestamos()){
-                Calendar fechaVencimiento = (Calendar) p.getFechaRetiro().clone();
-                fechaVencimiento.add(Calendar.DAY_OF_MONTH, 15);
-    
-                if (hoy.after(fechaVencimiento) &&
-                p.getFechaDevolucion() == null) {
-                    vencidos.add(p);
-                }  
+       for (Socio socio : this.getSocios().values()) {
+        for (Prestamo prestamo : socio.getPrestamos()) {
+
+            if (prestamo.vencido(hoy)) {
+                vencidos.add(prestamo);
             }
-            
-
-            
         }
+         }
 
-        return vencidos;
-    }
+       return vencidos;
+       }
 
     public ArrayList<Docente> docentesResponsables() {
         ArrayList<Docente> docentes = new ArrayList<Docente>();
