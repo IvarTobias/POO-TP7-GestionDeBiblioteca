@@ -92,8 +92,8 @@ public class Biblioteca {
     public int cantidadDeSociosPorTipo(String p_objeto) {
         int contador = 0;
 
-        for (Socio s : socios) {
-            if (s.getTipo().equalsIgnoreCase(p_objeto)) {
+        for (Socio s : this.getSocios().values()) {
+            if (s.soyDeLaClase().equalsIgnoreCase(p_objeto)) {
                 contador++;
             }
         }
@@ -106,16 +106,19 @@ public class Biblioteca {
 
         Calendar hoy = Calendar.getInstance();
 
-        for (Prestamo p : prestamos) {
-
-            Calendar fechaVencimiento = (Calendar) p.getFechaRetiro().clone();
-            fechaVencimiento.add(Calendar.DAY_OF_MONTH, 15);
-
-            if (hoy.after(fechaVencimiento) &&
-            !p.isDevuelto()) {
-
-                vencidos.add(p);
+        for (Socio s : this.getSocios().values()) {
+            for (Prestamo p: s.getPrestamos()){
+                Calendar fechaVencimiento = (Calendar) p.getFechaRetiro().clone();
+                fechaVencimiento.add(Calendar.DAY_OF_MONTH, 15);
+    
+                if (hoy.after(fechaVencimiento) &&
+                p.getFechaDevolucion() == null) {
+                    vencidos.add(p);
+                }  
             }
+            
+
+            
         }
 
         return vencidos;
@@ -161,10 +164,11 @@ public class Biblioteca {
         int cant = 1;
 
         for(Socio socio: this.getSocios().values()){
-            listaAux += ( cant + ") D.N.I: " + socio.dniSocio() + " || " + socio.nombre() + "(" + socio.soyDeLaClase() + ")" + 
+            listaAux += ( cant + ") D.N.I: " + socio.getDniSocio() + " || " + socio.getNombre() + "(" + socio.soyDeLaClase() + ")" + 
                 " || Libros Prestados: " +  socio.cantLibrosPrestados()) + "\n";
 
             cant += 1;
+        
 
         }
         return listaAux;
@@ -193,11 +197,14 @@ public class Biblioteca {
         String titulos = "";
 
         for(Libro libro: this.getLibros()) {
-            if(!titulos.contains(libro.titulo())) {
-                titulos += libro.titulo() + "\n";
+            if(!titulos.contains(libro.getTitulo())) {
+                titulos += libro.getTitulo() + "\n";
             }
+            
 
         }
+        
+    
 
         return titulos;
     }
@@ -212,7 +219,7 @@ public class Biblioteca {
         int cant = 1;
 
         for(Libro libro: this.getLibros()) {
-            listaLibros += cant + ") Titulo:" + libro.titulo() + " || Prestado:" + ((libro.prestado()) ? "Si": "No") + "\n";
+            listaLibros += cant + ") Titulo:" + libro.getTitulo() + " || Prestado:" + ((libro.prestado()) ? "Si": "No") + "\n";
             cant += 1;
         }
 
@@ -232,7 +239,7 @@ public class Biblioteca {
                 Docente docente = (Docente) socio; 
 
                 if(docente.esResponsable()) {
-                    listaDocentes += "* D.N.I: " + socio.dniSocio() + " || " + socio.nombre() + "(" + docente.soyDeLaClase() + ")" + 
+                    listaDocentes += "* D.N.I: " + socio.getDniSocio() + " || " + socio.getNombre() + "(" + docente.soyDeLaClase() + ")" + 
                     " || Libros Prestados: " +  socio.cantLibrosPrestados() + "\n";
                 }
 
