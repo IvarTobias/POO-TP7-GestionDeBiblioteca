@@ -81,8 +81,27 @@ public class Docente extends Socio
      *
      * @return true si siempre fue responsable
      */
-    public boolean esResponsable()
-    {
-        return false;
+   public boolean esResponsable()
+{
+    Calendar hoy = Calendar.getInstance();
+
+    for (Prestamo prestamo : this.getPrestamos()) {
+
+        Calendar vencimiento = (Calendar) prestamo.getFechaRetiro().clone();
+
+        vencimiento.add(Calendar.DAY_OF_YEAR, this.getDiasPrestamo());
+
+        if (prestamo.getFechaDevolucion() == null) {
+            if (hoy.after(vencimiento)) {
+                return false;
+            }
+        } else {
+            if (prestamo.getFechaDevolucion().after(vencimiento)) {
+                return false;
+            }
+        }
     }
+
+    return true;
+}
 }
